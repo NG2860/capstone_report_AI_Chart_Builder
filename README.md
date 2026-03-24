@@ -1,6 +1,6 @@
 # capstone_report_AI_Chart_Builder
 사용자 맞춤형 데이터 분석 효율화를 위한 AI 기반 스마트 차트 생성 웹 애플리케이션 An AI-powered web application that enables non-experts to instantly visualize uploaded data through both a manual drag-and-drop chart builder and an automated Google Gemini-based chart recommendation engine.
-# 📊 Smart Chart Builder
+# Smart Chart Builder
 
 ![React](https://img.shields.io/badge/React-18.x-61DAFB?style=flat-square&logo=react&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white)
@@ -17,7 +17,7 @@
 
 ---
 
-## 📌 프로젝트 소개 · Giới thiệu dự án
+## 프로젝트 소개 · Giới thiệu dự án
 
 🇰🇷 **Smart Chart Builder**는 CSV, Excel, JSON 형식의 데이터 파일을 업로드하면 두 가지 방식으로 즉시 차트를 생성할 수 있는 웹 기반 데이터 시각화 솔루션입니다. 전문 지식 없이도 누구나 데이터를 분석하고 시각화할 수 있도록 설계되었습니다.
 
@@ -49,7 +49,7 @@
 
 ---
 
-## 🖥️ 화면 구성 · Giao diện màn hình
+## 화면 구성 · Giao diện màn hình
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -300,14 +300,14 @@ npm run dev
 
 | 기간 · Thời gian | 🇰🇷 내용 | 🇻🇳 Nội dung |
 |------------------|----------|--------------|
-| 3월 1주 · Tuần 1 tháng 3 | 환경 설정, Gemini API 키 발급 | Cài đặt môi trường, lấy API key Gemini |
-| 3월 2주 · Tuần 2 tháng 3 | FastAPI 서버, 파일 파싱 모듈 | Server FastAPI, module phân tích file |
-| 4월 1주 · Tuần 1 tháng 4 | React 레이아웃, 파일 업로드 UI | Layout React, UI tải file |
-| 4월 2주 · Tuần 2 tháng 4 | 수동 모드 차트 빌더 완성 | Hoàn thiện chế độ biểu đồ thủ công |
-| 4월 3주 · Tuần 3 tháng 4 | Gemini AI 연동, 쿼터 시스템 | Kết nối Gemini AI, hệ thống hạn mức |
-| 4월 4주 · Tuần 4 tháng 4 | AI 추천 UI, 비교 뷰, 내보내기 | UI gợi ý AI, so sánh, xuất file |
-| 5월 1주 · Tuần 1 tháng 5 | 통합 테스트 및 버그 수정 | Kiểm thử tổng hợp và sửa lỗi |
-| 5월 2주 · Tuần 2 tháng 5 | 배포(Vercel + Render), 최종 보고서 | Triển khai (Vercel + Render), báo cáo cuối |
+| 3월 1,2주 · Tuần 1,2 tháng 3 | 환경 설정, Gemini API 키 발급 | Cài đặt môi trường, lấy API key Gemini |
+| 3월 3,4주 · Tuần 3,4 tháng 3 | FastAPI 서버, 파일 파싱 모듈 | Server FastAPI, module phân tích file |
+| 4월 1주 · Tuần 1 tháng 4     | React 레이아웃, 파일 업로드 UI | Layout React, UI tải file |
+| 4월 2주 · Tuần 2 tháng 4     | 수동 모드 차트 빌더 완성 | Hoàn thiện chế độ biểu đồ thủ công |
+| 4월 3,4주 · Tuần 3,4 tháng 4 | Gemini AI 연동, 쿼터 시스템 | Kết nối Gemini AI, hệ thống hạn mức |
+| 5월 1,2주 · Tuần 1,2 tháng 5 | AI 추천 UI, 비교 뷰, 내보내기 | UI gợi ý AI, so sánh, xuất file |
+| 5월 3,4주 · Tuần 3,4 tháng 5 | 통합 테스트 및 버그 수정 | Kiểm thử tổng hợp và sửa lỗi |
+| 6월 1주 · Tuần 1 tháng 6 | 배포(Vercel + Render), 최종 보고서 | Triển khai (Vercel + Render), báo cáo cuối |
 
 ---
 
