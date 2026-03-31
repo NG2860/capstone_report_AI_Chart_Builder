@@ -154,7 +154,7 @@ cd smart-chart-builder
 
 ```env
 GEMINI_API_KEY=여기에_Gemini_API_키_입력
-# 🇻🇳 Điền API key Gemini vào đây
+gen-lang-client-0647249111
 ```
 
 > 🇰🇷 **Gemini API 키 발급:** https://aistudio.google.com 에서 무료 발급
