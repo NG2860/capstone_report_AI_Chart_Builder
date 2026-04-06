@@ -4,7 +4,7 @@ import FileUpload   from './components/FileUpload'
 import DataPreview  from './components/DataPreview'
 import ManualChart  from './components/ManualChart'
 import AiPanel      from './components/AiPanel'
-import StoryPanel   from './components/StoryPanel'   // ← MỚI
+import StoryPanel   from './components/StoryPanel'   
 import './App.css'
 
 const API = 'http://localhost:8000'  // đổi thành Render URL khi deploy
@@ -12,12 +12,12 @@ const API = 'http://localhost:8000'  // đổi thành Render URL khi deploy
 export default function App() {
   const [columns,     setColumns]     = useState([])
   const [preview,     setPreview]     = useState([])
-  const [dataSummary, setDataSummary] = useState({})  // ← MỚI
+  const [dataSummary, setDataSummary] = useState({}) 
   const [file,        setFile]        = useState(null)
   const [aiCharts,    setAiCharts]    = useState([])
   const [remaining,   setRemaining]   = useState(2)
   const [loading,     setLoading]     = useState(false)
-  const [chartConfig, setChartConfig] = useState(null) // ← MỚI
+  const [chartConfig, setChartConfig] = useState(null) 
 
   // Upload file → nhận columns + preview + summary
   const handleUpload = async (f) => {
@@ -28,7 +28,7 @@ export default function App() {
       const res = await axios.post(`${API}/api/upload`, fd)
       setColumns(res.data.columns)
       setPreview(res.data.preview)
-      setDataSummary(res.data.summary)  // ← MỚI: lưu summary
+      setDataSummary(res.data.summary)   lưu summary
     } catch (e) {
       alert('파일 업로드 실패: ' + (e.response?.data?.detail || e.message))
     }
@@ -106,11 +106,7 @@ export default function App() {
 */
 
 
-// ════════════════════════════════════════════════════════════
-// FILE: frontend/src/App.css
-// ════════════════════════════════════════════════════════════
-/*
-* { box-sizing: border-box; margin: 0; padding: 0; }
+ { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; }
 
 .app {
@@ -169,10 +165,6 @@ body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; }
 */
 
 
-// ════════════════════════════════════════════════════════════
-// FILE: frontend/src/components/FileUpload.jsx
-// ════════════════════════════════════════════════════════════
-/*
 import { useRef } from 'react'
 
 export default function FileUpload({ onUpload }) {
@@ -220,10 +212,6 @@ export default function FileUpload({ onUpload }) {
 */
 
 
-// ════════════════════════════════════════════════════════════
-// FILE: frontend/src/components/DataPreview.jsx
-// ════════════════════════════════════════════════════════════
-/*
 const TYPE_STYLE = {
   numeric:     { bg: '#EEEDFE', color: '#3C3489' },
   categorical: { bg: '#E1F5EE', color: '#085041' },
@@ -289,11 +277,7 @@ export default function DataPreview({ columns, preview }) {
 */
 
 
-// ════════════════════════════════════════════════════════════
-// FILE: frontend/src/components/ManualChart.jsx
-// Có thêm props onConfigChange để truyền config sang StoryPanel
-// ════════════════════════════════════════════════════════════
-/*
+ 
 import { useEffect, useRef, useState } from 'react'
 import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
@@ -413,10 +397,7 @@ export default function ManualChart({ columns, onConfigChange }) {
 */
 
 
-// ════════════════════════════════════════════════════════════
-// FILE: frontend/src/components/AiPanel.jsx  (giữ nguyên)
-// ════════════════════════════════════════════════════════════
-/*
+
 export default function AiPanel({ charts, loading, onRequest }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -474,10 +455,7 @@ export default function AiPanel({ charts, loading, onRequest }) {
 */
 
 
-// ════════════════════════════════════════════════════════════
-// FILE: frontend/src/components/StoryPanel.jsx  ← (MỚI HOÀN TOÀN)
-// ════════════════════════════════════════════════════════════
-/*
+
 import { useState } from 'react'
 import axios from 'axios'
 
@@ -608,24 +586,5 @@ export default function StoryPanel({ chartConfig, dataSummary, sampleData, langu
     </div>
   )
 }
-*/
 
 
-// ════════════════════════════════════════════════════════════
-// HƯỚNG DẪN SỬ DỤNG FILE NÀY:
-//
-// 1. Tạo từng file riêng trong VS Code
-// 2. Copy phần code nằm giữa /* và */ vào đúng file
-// 3. Xóa dấu /* và */ trước khi lưu
-// 4. Chạy: npm install chart.js axios
-// 5. Chạy: npm run dev
-//
-// Thứ tự tạo file:
-// ① App.css
-// ② FileUpload.jsx
-// ③ DataPreview.jsx
-// ④ ManualChart.jsx
-// ⑤ AiPanel.jsx
-// ⑥ StoryPanel.jsx  ← File mới nhất
-// ⑦ App.jsx (cuối cùng vì import các file trên)
-// ════════════════════════════════════════════════════════════
