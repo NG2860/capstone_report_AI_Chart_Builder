@@ -28,7 +28,7 @@ export default function App() {
       const res = await axios.post(`${API}/api/upload`, fd)
       setColumns(res.data.columns)
       setPreview(res.data.preview)
-      setDataSummary(res.data.summary)  // ← MỚI: lưu summary
+      setDataSummary(res.data.summary) 
     } catch (e) {
       alert('파일 업로드 실패: ' + (e.response?.data?.detail || e.message))
     }
@@ -54,7 +54,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <span className="logo">📊 스마트 차트 빌더</span>
+        <span className="logo"> 
         <nav className="nav">
           <a>프로젝트</a>
           <a>데이터셋</a>
@@ -162,7 +162,7 @@ body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; }
   padding: 12px;
   overflow-y: auto;
 }
-*/
+
 
 
 
@@ -210,7 +210,7 @@ export default function FileUpload({ onUpload }) {
     </div>
   )
 }
-*/
+
 
 
 
@@ -276,7 +276,7 @@ export default function DataPreview({ columns, preview }) {
     </div>
   )
 }
-*/
+
 
 
 
@@ -396,7 +396,7 @@ export default function ManualChart({ columns, onConfigChange }) {
     </div>
   )
 }
-*/
+
 
 
 
@@ -454,7 +454,7 @@ export default function AiPanel({ charts, loading, onRequest }) {
     </div>
   )
 }
-*/
+
 
 
 

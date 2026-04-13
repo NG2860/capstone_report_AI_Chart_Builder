@@ -1,0 +1,243 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{display:grid;grid-template-rows:44px 1fr;height:680px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-tertiary)}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;padding:0 16px;gap:24px}
+.logo{font-size:13px;font-weight:500;color:var(--color-text-primary);display:flex;align-items:center;gap:6px}
+.logo-icon{width:18px;height:18px;background:#534AB7;border-radius:4px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:10px;height:10px}
+.nav{display:flex;gap:2px;flex:1;margin-left:8px}
+.nav a{font-size:12px;color:var(--color-text-secondary);padding:6px 10px;border-radius:var(--border-radius-md);cursor:pointer;text-decoration:none}
+.nav a.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.quota-badge{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-text-secondary)}
+.quota-pill{background:#EAF3DE;color:#27500A;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;border:0.5px solid #97C459}
+.body{display:grid;grid-template-columns:180px 1fr 260px;gap:0;overflow:hidden}
+.sidebar{background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);padding:12px;display:flex;flex-direction:column;gap:8px}
+.sidebar-title{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.04em;padding:4px 4px 2px}
+.upload-btn{background:#534AB7;color:#EEEDFE;font-size:12px;font-weight:500;border:none;border-radius:var(--border-radius-md);padding:7px 10px;cursor:pointer;text-align:center;width:100%}
+.file-item{display:flex;align-items:center;gap:7px;padding:6px 6px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid transparent}
+.file-item.active{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.file-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;flex-shrink:0}
+.fi-csv{background:#E1F5EE;color:#085041}
+.fi-xlsx{background:#EAF3DE;color:#27500A}
+.file-name{font-size:11px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.center{background:var(--color-background-secondary);padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.mode-tabs{display:flex;gap:4px;background:var(--color-background-primary);border-radius:var(--border-radius-md);padding:3px;border:0.5px solid var(--color-border-tertiary)}
+.tab{flex:1;font-size:11px;font-weight:500;padding:5px 0;border-radius:6px;text-align:center;cursor:pointer;color:var(--color-text-secondary)}
+.tab.active{background:#534AB7;color:#EEEDFE}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.chart-types{display:flex;gap:6px}
+.chart-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;background:var(--color-background-primary);flex:1}
+.chart-btn.active{border-color:#534AB7;background:#EEEDFE}
+.chart-btn svg{width:20px;height:20px}
+.chart-btn span{font-size:9px;color:var(--color-text-secondary)}
+.chart-btn.active span{color:#3C3489}
+.axis-row{display:flex;gap:8px}
+.axis-box{flex:1}
+.axis-label{font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px}
+.axis-drop{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 8px;font-size:11px;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center}
+.chart-preview{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px;flex:1;min-height:220px;display:flex;flex-direction:column;gap:8px}
+.chart-title-row{display:flex;justify-content:space-between;align-items:center}
+.chart-title{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.chart-area{flex:1;display:flex;align-items:flex-end;gap:5px;padding:8px 4px 0}
+.bar{border-radius:3px 3px 0 0;background:var(--bar-primary,#7F77DD);flex:1;min-width:18px}
+.bar.alt{background:var(--bar-alt,#5DCAA5)}
+.x-labels{display:flex;gap:5px;padding:4px 4px 0}
+.x-label{flex:1;font-size:9px;color:var(--color-text-tertiary);text-align:center;min-width:18px}
+.right-panel{background:var(--color-background-primary);border-left:0.5px solid var(--color-border-tertiary);padding:12px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
+.ai-header{display:flex;align-items:center;gap:6px}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#1D9E75}
+.ai-title{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.rec-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:10px;background:var(--color-background-secondary);cursor:pointer}
+.rec-card.best{border-color:#534AB7;background:#EEEDFE}
+.rec-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.rec-name{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.rec-card.best .rec-name{color:#3C3489}
+.best-badge{background:#534AB7;color:#EEEDFE;font-size:9px;font-weight:500;padding:2px 6px;border-radius:20px}
+.mini-chart{height:52px;display:flex;align-items:flex-end;gap:3px;padding:0 2px}
+.mini-bar{border-radius:2px 2px 0 0;flex:1}
+.rec-reason{font-size:10px;color:var(--color-text-secondary);margin-top:5px;line-height:1.4}
+.ai-btn{background:#534AB7;color:#EEEDFE;border:none;border-radius:var(--border-radius-md);padding:8px;font-size:12px;font-weight:500;cursor:pointer;text-align:center;width:100%}
+.usage-row{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--color-text-tertiary)}
+.usage-bar{height:3px;background:var(--color-border-tertiary);border-radius:2px;margin-top:4px}
+.usage-fill{height:100%;background:#534AB7;border-radius:2px;width:50%}
+</style>
+<div class="app">
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 10 10" fill="none"><rect x="1" y="5" width="2" height="4" fill="#EEEDFE"/><rect x="4" y="3" width="2" height="6" fill="#AFA9EC"/><rect x="7" y="1" width="2" height="8" fill="#EEEDFE"/></svg></div>
+      스마트 차트 빌더
+    </div>
+    <nav class="nav">
+      <a class="active">프로젝트</a>
+      <a>데이터셋</a>
+      <a>차트</a>
+      <a>내보내기</a>
+    </nav>
+    <div class="quota-badge">
+      <span>오늘 AI 사용량</span>
+      <span class="quota-pill">1 / 2 남음</span>
+    </div>
+  </div>
+  <div class="body">
+    <div class="sidebar">
+      <div class="sidebar-title">데이터 소스</div>
+      <button class="upload-btn" onclick="sendPrompt('파일 업로드 화면을 자세히 보여줘')">+ 파일 업로드</button>
+      <div class="file-item active">
+        <div class="file-icon fi-csv">CSV</div>
+        <span class="file-name">매출_2025.csv</span>
+      </div>
+      <div class="file-item">
+        <div class="file-icon fi-csv">CSV</div>
+        <span class="file-name">고객_설문.csv</span>
+      </div>
+      <div class="file-item">
+        <div class="file-icon fi-xlsx">XLS</div>
+        <span class="file-name">재고현황.xlsx</span>
+      </div>
+      <div class="file-item">
+        <div class="file-icon fi-xlsx">XLS</div>
+        <span class="file-name">직원현황.xlsx</span>
+      </div>
+    </div>
+    <div class="center">
+      <div class="mode-tabs">
+        <div class="tab active">수동 모드</div>
+        <div class="tab" onclick="sendPrompt('AI 추천 모드 화면을 자세히 보여줘')">AI 추천 모드</div>
+      </div>
+      <div>
+        <div class="section-label" style="margin-bottom:6px">차트 유형</div>
+        <div class="chart-types">
+          <div class="chart-btn active">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="8" width="3" height="10" fill="#7F77DD"/><rect x="7" y="5" width="3" height="13" fill="#7F77DD"/><rect x="12" y="3" width="3" height="15" fill="#7F77DD"/><rect x="17" y="6" width="3" height="12" fill="#7F77DD" opacity=".4"/></svg>
+            <span>막대</span>
+          </div>
+          <div class="chart-btn">
+            <svg viewBox="0 0 20 20" fill="none"><polyline points="1,16 5,10 9,13 13,5 17,8 20,4" stroke="#888" stroke-width="1.5" fill="none"/></svg>
+            <span>꺾은선</span>
+          </div>
+          <div class="chart-btn">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#888" stroke-width="1" fill="none"/><path d="M10 10 L10 2 A8 8 0 0 1 17 14 Z" fill="#B4B2A9"/></svg>
+            <span>원형</span>
+          </div>
+          <div class="chart-btn">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="4" cy="14" r="1.5" fill="#888"/><circle cx="7" cy="9" r="1.5" fill="#888"/><circle cx="11" cy="12" r="1.5" fill="#888"/><circle cx="14" cy="5" r="1.5" fill="#888"/><circle cx="17" cy="8" r="1.5" fill="#888"/></svg>
+            <span>산점도</span>
+          </div>
+          <div class="chart-btn">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="1" y="12" width="3" height="6" fill="#B4B2A9"/><rect x="5" y="7" width="3" height="11" fill="#B4B2A9"/><rect x="9" y="4" width="3" height="14" fill="#B4B2A9"/><rect x="13" y="9" width="3" height="9" fill="#B4B2A9"/><rect x="17" y="13" width="3" height="5" fill="#B4B2A9"/></svg>
+            <span>히스토그램</span>
+          </div>
+        </div>
+      </div>
+      <div class="axis-row">
+        <div class="axis-box">
+          <div class="axis-label">X축 변수</div>
+          <div class="axis-drop"><span>월(Month)</span><span style="font-size:10px">▼</span></div>
+        </div>
+        <div class="axis-box">
+          <div class="axis-label">Y축 변수</div>
+          <div class="axis-drop"><span>매출(Revenue)</span><span style="font-size:10px">▼</span></div>
+        </div>
+        <div class="axis-box">
+          <div class="axis-label">색상 그룹</div>
+          <div class="axis-drop"><span>지역(Region)</span><span style="font-size:10px">▼</span></div>
+        </div>
+      </div>
+      <div class="chart-preview">
+        <div class="chart-title-row">
+          <span class="chart-title">지역별 월간 매출</span>
+          <span style="font-size:10px;color:var(--color-text-tertiary)">매출_2025.csv</span>
+        </div>
+        <div class="chart-area">
+          <div class="bar" style="height:55%"></div>
+          <div class="bar alt" style="height:72%"></div>
+          <div class="bar" style="height:48%"></div>
+          <div class="bar" style="height:88%"></div>
+          <div class="bar alt" style="height:63%"></div>
+          <div class="bar" style="height:79%"></div>
+          <div class="bar" style="height:91%"></div>
+          <div class="bar alt" style="height:70%"></div>
+          <div class="bar" style="height:55%"></div>
+          <div class="bar" style="height:83%"></div>
+          <div class="bar alt" style="height:95%"></div>
+          <div class="bar" style="height:78%"></div>
+        </div>
+        <div class="x-labels">
+          <span class="x-label">1월</span><span class="x-label">2월</span><span class="x-label">3월</span>
+          <span class="x-label">4월</span><span class="x-label">5월</span><span class="x-label">6월</span>
+          <span class="x-label">7월</span><span class="x-label">8월</span><span class="x-label">9월</span>
+          <span class="x-label">10월</span><span class="x-label">11월</span><span class="x-label">12월</span>
+        </div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div class="ai-header">
+        <div class="ai-dot"></div>
+        <span class="ai-title">AI 추천 결과</span>
+      </div>
+      <div class="rec-card best">
+        <div class="rec-top">
+          <span class="rec-name">막대 차트</span>
+          <span class="best-badge">최적 추천</span>
+        </div>
+        <div class="mini-chart">
+          <div class="mini-bar" style="height:50%;background:#7F77DD"></div>
+          <div class="mini-bar" style="height:70%;background:#7F77DD"></div>
+          <div class="mini-bar" style="height:45%;background:#7F77DD"></div>
+          <div class="mini-bar" style="height:85%;background:#7F77DD"></div>
+          <div class="mini-bar" style="height:60%;background:#7F77DD"></div>
+          <div class="mini-bar" style="height:75%;background:#7F77DD"></div>
+        </div>
+        <div class="rec-reason">월별 매출 비교에 가장 적합합니다. 범주형 데이터의 크기 차이를 명확하게 시각화할 수 있습니다.</div>
+      </div>
+      <div class="rec-card" onclick="sendPrompt('꺾은선 차트 추천 이유를 더 자세히 설명해줘')">
+        <div class="rec-top">
+          <span class="rec-name">꺾은선 차트</span>
+        </div>
+        <div class="mini-chart">
+          <svg width="100%" height="52" viewBox="0 0 200 52" preserveAspectRatio="none"><polyline points="10,40 40,28 70,35 100,15 130,22 160,10 190,18" stroke="#5DCAA5" stroke-width="2" fill="none"/></svg>
+        </div>
+        <div class="rec-reason">월별 추세 변화를 확인하기에 적합합니다.</div>
+      </div>
+      <div class="rec-card">
+        <div class="rec-top">
+          <span class="rec-name">영역 차트</span>
+        </div>
+        <div class="mini-chart">
+          <svg width="100%" height="52" viewBox="0 0 200 52" preserveAspectRatio="none"><polygon points="10,52 10,38 40,25 70,32 100,12 130,20 160,8 190,15 190,52" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/></svg>
+        </div>
+        <div class="rec-reason">누적 매출 흐름을 강조할 때 효과적입니다.</div>
+      </div>
+      <div style="border-top:0.5px solid var(--color-border-tertiary);padding-top:8px">
+        <div class="section-label" style="margin-bottom:6px">차트 색상 테마</div>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <button class="ai-btn" style="flex:1;padding:6px;font-size:11px" onclick="setChartColorTheme('#7F77DD','#5DCAA5')">기본</button>
+          <button class="ai-btn" style="flex:1;padding:6px;font-size:11px;background:#F0B269;color:#3B1F03" onclick="setChartColorTheme('#F0B269','#F29F05')">해질녘</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <button class="ai-btn" style="flex:1;padding:6px;font-size:11px;background:#46B5BF;color:#FFF" onclick="setChartColorTheme('#46B5BF','#2F8D96')">바다</button>
+          <button class="ai-btn" style="flex:1;padding:6px;font-size:11px;background:#8DBE4B;color:#FFF" onclick="setChartColorTheme('#8DBE4B','#6C9B35')">숲</button>
+        </div>
+        <div class="usage-row">
+          <span>오늘 AI 사용량</span><span style="font-weight:500;color:var(--color-text-primary)">1 / 2회</span>
+        </div>
+        <div class="usage-bar"><div class="usage-fill"></div></div>
+      </div>
+      <button class="ai-btn" onclick="sendPrompt('AI 추천 모드를 다시 실행하려면 어떻게 해야 해?')">AI 추천 다시 실행</button>
+    </div>
+  </div>
+</div>
+<script>
+function setChartColorTheme(primary, alt) {
+  document.documentElement.style.setProperty('--bar-primary', primary);
+  document.documentElement.style.setProperty('--bar-alt', alt);
+  document.querySelectorAll('.chart-area .bar').forEach((bar, index) => {
+    if (bar.classList.contains('alt')) {
+      bar.style.background = alt;
+    } else {
+      bar.style.background = primary;
+    }
+  });
+  document.querySelectorAll('.mini-chart .mini-bar').forEach((mini) => mini.style.background = primary);
+}
+</script>

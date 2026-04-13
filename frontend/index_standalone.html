@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📊 Smart Chart Builder</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: #fff; border-bottom: 1px solid #eee;
+      display: flex; align-items: center; padding: 0 20px;
+      height: 48px; gap: 16px; position: sticky; top: 0; z-index: 10;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .logo { font-weight: 700; font-size: 15px; color: #534AB7; }
+    .quota {
+      margin-left: auto; font-size: 11px;
+      background: #E1F5EE; color: #085041;
+      padding: 4px 12px; border-radius: 20px; font-weight: 500;
+    }
+
+    /* ── Layout ── */
+    .body {
+      display: grid;
+      grid-template-columns: 220px 1fr 280px;
+      gap: 0; height: calc(100vh - 48px); overflow: hidden;
+    }
+
+    .sidebar, .right {
+      background: #fafafa; padding: 14px;
+      overflow-y: auto; border-right: 1px solid #eee;
+    }
+    .right { border-right: none; border-left: 1px solid #eee; }
+    .main { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+
+    /* ── Section label ── */
+    .label { font-size: 11px; color: #888; margin-bottom: 8px; font-weight: 500; }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed #AFA9EC; border-radius: 10px;
+      padding: 20px 10px; text-align: center; cursor: pointer;
+      background: #EEEDFE; transition: background .2s;
+    }
+    .upload-zone:hover { background: #dddcfc; }
+    .upload-zone .icon { font-size: 22px; margin-bottom: 4px; }
+    .upload-zone .txt { font-size: 12px; color: #534AB7; font-weight: 600; }
+    .upload-zone .sub { font-size: 10px; color: #888; margin-top: 3px; }
+
+    /* ── Card ── */
+    .card {
+      background: #fff; border: 1px solid #eee;
+      border-radius: 10px; padding: 14px;
+    }
+    .card-title { font-size: 12px; font-weight: 600; color: #333; margin-bottom: 10px; }
+
+    /* ── Tags ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .tag {
+      font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500;
+    }
+    .tag-numeric     { background: #EEEDFE; color: #3C3489; }
+    .tag-categorical { background: #E1F5EE; color: #085041; }
+    .tag-date        { background: #FAEEDA; color: #633806; }
+
+    /* ── Table ── */
+    .preview-wrap { overflow-x: auto; }
+    table { width: 100%; font-size: 10px; border-collapse: collapse; }
+    th { padding: 4px 6px; background: #f5f5f5; text-align: left; border-bottom: 1px solid #eee; white-space: nowrap; }
+    td { padding: 3px 6px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; color: #333; }
+
+    /* ── Chart type buttons ── */
+    .type-btns { display: flex; gap: 6px; margin-bottom: 10px; }
+    .type-btn {
+      flex: 1; padding: 6px 0; font-size: 11px; border-radius: 6px;
+      border: 1px solid #ddd; background: #fff; color: #666;
+      cursor: pointer; font-weight: 400; transition: all .15s;
+    }
+    .type-btn.active {
+      border: 2px solid #534AB7; background: #EEEDFE;
+      color: #3C3489; font-weight: 600;
+    }
+
+    /* ── Selects ── */
+    .axis-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .axis-group { flex: 1; }
+    .axis-group label { font-size: 10px; color: #888; display: block; margin-bottom: 3px; }
+    select {
+      width: 100%; padding: 5px 8px; font-size: 11px;
+      border-radius: 6px; border: 1px solid #ddd; background: #fff;
+    }
+
+    /* ── Empty chart placeholder ── */
+    .chart-empty {
+      height: 160px; display: flex; align-items: center;
+      justify-content: center; color: #aaa; font-size: 12px;
+      border: 1px dashed #ddd; border-radius: 8px;
+    }
+    canvas { max-height: 260px; }
+
+    /* ── AI panel ── */
+    .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: #0F6E56; display: inline-block; margin-right: 6px; }
+    .ai-card {
+      border: 1px solid #eee; border-radius: 10px;
+      padding: 10px 12px; background: #fff; margin-bottom: 8px;
+    }
+    .ai-card.best { border: 2px solid #534AB7; background: #EEEDFE; }
+    .ai-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .ai-card-type { font-size: 11px; font-weight: 600; color: #3C3489; }
+    .ai-card-type-normal { font-size: 11px; font-weight: 500; color: #333; }
+    .badge {
+      font-size: 9px; background: #534AB7; color: #fff;
+      padding: 2px 7px; border-radius: 20px; font-weight: 600;
+    }
+    .ai-reason { font-size: 11px; color: #666; line-height: 1.5; }
+    .ai-score { font-size: 10px; color: #aaa; margin-top: 3px; }
+
+    /* ── Buttons ── */
+    .btn {
+      width: 100%; padding: 9px 0; border: none; border-radius: 8px;
+      font-size: 12px; font-weight: 600; cursor: pointer; transition: background .2s;
+    }
+    .btn-purple { background: #534AB7; color: #EEEDFE; }
+    .btn-purple:hover { background: #3C3489; }
+    .btn-purple:disabled { background: #aaa; cursor: not-allowed; }
+    .btn-green { background: #0F6E56; color: #fff; }
+    .btn-green:hover { background: #085041; }
+    .btn-green:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── Story panel ── */
+    .insight-row { display: flex; gap: 6px; margin-bottom: 8px; }
+    .insight-card {
+      flex: 1; border-radius: 8px; padding: 8px 6px; text-align: center;
+    }
+    .insight-val { font-size: 12px; font-weight: 600; }
+    .insight-lbl { font-size: 10px; margin-top: 2px; opacity: .8; }
+    .story-box {
+      background: #E1F5EE; border: 1px solid #9FE1CB;
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+    }
+    .story-box h4 { font-size: 11px; font-weight: 600; color: #085041; margin-bottom: 5px; }
+    .story-box p  { font-size: 12px; color: #333; line-height: 1.7; }
+    .reco-box {
+      font-size: 11px; color: #534AB7; background: #EEEDFE;
+      border: 1px solid #AFA9EC; border-radius: 6px;
+      padding: 7px 10px; display: flex; gap: 6px;
+    }
+    .reco-box strong { font-weight: 600; flex-shrink: 0; }
+
+    /* ── Error ── */
+    .error-box {
+      font-size: 11px; color: #A32D2D; background: #FCEBEB;
+      padding: 7px 10px; border-radius: 6px; margin-bottom: 8px;
+    }
+
+    /* ── Divider ── */
+    .divider { border-top: 1px solid #eee; margin: 8px 0; }
+
+    /* ── Spinner ── */
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── File name display ── */
+    .file-info {
+      font-size: 10px; color: #534AB7; background: #EEEDFE;
+      padding: 4px 8px; border-radius: 6px; margin-top: 6px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <span class="logo">📊 스마트 차트 빌더</span>
+  <span class="quota" id="quota-badge">AI 잔여: 2회</span>
+</div>
+
+<!-- Main layout -->
+<div class="body">
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+    <div class="label">데이터 소스</div>
+    <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📂</div>
+      <div class="txt">+ 파일 업로드</div>
+      <div class="sub">CSV / Excel / JSON</div>
+    </div>
+    <input type="file" id="file-input" accept=".csv,.xlsx,.xls,.json" style="display:none" />
+    <div id="file-info-box"></div>
+    <div id="col-section" style="display:none; margin-top:12px;">
+      <div class="label">컬럼 정보</div>
+      <div class="tags" id="col-tags"></div>
+      <div class="label">미리보기 (상위 5행)</div>
+      <div class="preview-wrap"><table id="preview-table"></table></div>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main">
+
+    <!-- Manual chart card -->
+    <div class="card">
+      <div class="card-title">수동 모드 — 차트 설정</div>
+      <div class="type-btns">
+        <button class="type-btn active" data-type="bar">막대</button>
+        <button class="type-btn" data-type="line">꺾은선</button>
+        <button class="type-btn" data-type="pie">원형</button>
+        <button class="type-btn" data-type="scatter">산점도</button>
+      </div>
+      <div class="axis-row">
+        <div class="axis-group">
+          <label>X축</label>
+          <select id="x-axis"><option value="">선택</option></select>
+        </div>
+        <div class="axis-group">
+          <label>Y축 (숫자형)</label>
+          <select id="y-axis"><option value="">선택</option></select>
+        </div>
+      </div>
+      <div id="chart-area">
+        <div class="chart-empty">X축과 Y축을 선택하면 차트가 표시됩니다</div>
+      </div>
+    </div>
+
+    <!-- Story panel card -->
+    <div class="card" id="story-card" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; align-items:center;">
+          <span class="ai-dot"></span>
+          <span style="font-size:12px; font-weight:600;">데이터 스토리텔링</span>
+        </div>
+        <span style="font-size:10px; color:#888; background:#f5f5f5; padding:2px 8px; border-radius:20px;">쿼터 무제한</span>
+      </div>
+      <button class="btn btn-green" id="story-btn" onclick="generateStory()">AI 스토리 생성</button>
+      <div id="story-error"></div>
+      <div id="story-result" style="margin-top:10px;"></div>
+    </div>
+
+  </div>
+
+  <!-- ── Right: AI panel ── -->
+  <div class="right">
+    <div style="display:flex; align-items:center; margin-bottom:10px;">
+      <span class="ai-dot"></span>
+      <span style="font-size:12px; font-weight:600;">AI 추천 결과</span>
+    </div>
+    <div id="ai-charts"></div>
+    <div class="divider"></div>
+    <button class="btn btn-purple" id="ai-btn" onclick="runAiRecommend()">AI 차트 추천 실행</button>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000'
+
+let uploadedFile = null
+let columns = []
+let preview = []
+let dataSummary = {}
+let chartConfig = null
+let chartInstance = null
+let currentChartType = 'bar'
+
+// ── Upload ──────────────────────────────────────────────────
+
+const dropZone = document.getElementById('drop-zone')
+dropZone.addEventListener('dragover', e => e.preventDefault())
+dropZone.addEventListener('drop', e => {
+  e.preventDefault()
+  const f = e.dataTransfer.files[0]
+  if (f) handleFile(f)
+})
+document.getElementById('file-input').addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0])
+})
+
+async function handleFile(file) {
+  uploadedFile = file
+  document.getElementById('file-info-box').innerHTML =
+    `<div class="file-info">📄 ${file.name}</div>`
+
+  const fd = new FormData()
+  fd.append('file', file)
+  try {
+    const res = await axios.post(`${API}/api/upload`, fd)
+    columns = res.data.columns
+    preview = res.data.preview
+    dataSummary = res.data.summary || {}
+    renderColumns()
+    renderPreview()
+    renderAxisSelects()
+    document.getElementById('col-section').style.display = 'block'
+  } catch (e) {
+    alert('업로드 실패: ' + (e.response?.data?.detail || e.message))
+  }
+}
+
+// ── Column tags ──────────────────────────────────────────────
+
+function renderColumns() {
+  const container = document.getElementById('col-tags')
+  container.innerHTML = columns.map(c => {
+    const cls = c.type === 'numeric' ? 'tag-numeric'
+              : c.type === 'date'    ? 'tag-date'
+              : 'tag-categorical'
+    return `<span class="tag ${cls}">${c.name}</span>`
+  }).join('')
+}
+
+// ── Preview table ──────────────────────────────────────────
+
+function renderPreview() {
+  const tbl = document.getElementById('preview-table')
+  const thead = `<thead><tr>${columns.map(c =>
+    `<th>${c.name}</th>`).join('')}</tr></thead>`
+  const tbody = `<tbody>${preview.map(row =>
+    `<tr>${columns.map(c =>
+      `<td>${row[c.name] ?? ''}</td>`).join('')}</tr>`).join('')}</tbody>`
+  tbl.innerHTML = thead + tbody
+}
+
+// ── Axis selects ──────────────────────────────────────────
+
+function renderAxisSelects() {
+  const xSel = document.getElementById('x-axis')
+  const ySel = document.getElementById('y-axis')
+  const numericCols = columns.filter(c => c.type === 'numeric')
+
+  xSel.innerHTML = '<option value="">선택</option>' +
+    columns.map(c => `<option value="${c.name}">${c.name}</option>`).join('')
+  ySel.innerHTML = '<option value="">선택</option>' +
+    numericCols.map(c => `<option value="${c.name}">${c.name}</option>`).join('')
+}
+
+document.getElementById('x-axis').addEventListener('change', tryRenderChart)
+document.getElementById('y-axis').addEventListener('change', tryRenderChart)
+
+// ── Chart type buttons ────────────────────────────────────
+
+document.querySelectorAll('.type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    currentChartType = btn.dataset.type
+    tryRenderChart()
+  })
+})
+
+// ── Chart rendering ───────────────────────────────────────
+
+function tryRenderChart() {
+  const x = document.getElementById('x-axis').value
+  const y = document.getElementById('y-axis').value
+  const area = document.getElementById('chart-area')
+
+  if (!x || !y) {
+    area.innerHTML = '<div class="chart-empty">X축과 Y축을 선택하면 차트가 표시됩니다</div>'
+    document.getElementById('story-card').style.display = 'none'
+    return
+  }
+
+  chartConfig = { type: currentChartType, xAxis: x, yAxis: y, title: `${x}별 ${y}` }
+  document.getElementById('story-card').style.display = 'block'
+  document.getElementById('story-result').innerHTML = ''
+
+  // Build data from preview
+  let labels, data
+  if (currentChartType === 'pie') {
+    labels = preview.map(r => String(r[x] ?? ''))
+    data = preview.map(r => Number(r[y]) || 0)
+  } else if (currentChartType === 'scatter') {
+    labels = []
+    data = preview.map(r => ({ x: Number(r[x]) || 0, y: Number(r[y]) || 0 }))
+  } else {
+    labels = preview.map(r => String(r[x] ?? ''))
+    data = preview.map(r => Number(r[y]) || 0)
+  }
+
+  area.innerHTML = '<canvas id="my-chart" style="max-height:260px;"></canvas>'
+  if (chartInstance) chartInstance.destroy()
+  const ctx = document.getElementById('my-chart').getContext('2d')
+  chartInstance = new Chart(ctx, {
+    type: currentChartType,
+    data: {
+      labels,
+      datasets: [{
+        label: y,
+        data,
+        backgroundColor: currentChartType === 'pie'
+          ? ['#7F77DD','#0F6E56','#E24B4A','#F4A12E','#AFA9EC','#9FE1CB']
+          : '#7F77DD',
+        borderColor: '#534AB7',
+        borderWidth: 1.5,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+    },
+  })
+}
+
+// ── AI Recommend ──────────────────────────────────────────
+
+async function runAiRecommend() {
+  if (!uploadedFile) { alert('먼저 파일을 업로드하세요.'); return }
+  const btn = document.getElementById('ai-btn')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spin">⏳</span> 분석 중...'
+
+  const fd = new FormData()
+  fd.append('file', uploadedFile)
+  try {
+    const res = await axios.post(`${API}/api/ai-recommend`, fd)
+    renderAiCharts(res.data.charts)
+    document.getElementById('quota-badge').textContent = `AI 잔여: ${res.data.remaining}회`
+  } catch (e) {
+    alert(e.response?.data?.detail || 'AI 추천 오류 발생')
+  } finally {
+    btn.disabled = false
+    btn.textContent = 'AI 차트 추천 실행'
+  }
+}
+
+function renderAiCharts(charts) {
+  const container = document.getElementById('ai-charts')
+  container.innerHTML = charts.map((c, i) => `
+    <div class="ai-card ${i === 0 ? 'best' : ''}">
+      <div class="ai-card-header">
+        <span class="${i === 0 ? 'ai-card-type' : 'ai-card-type-normal'}">${c.type} 차트</span>
+        ${i === 0 ? '<span class="badge">최적 추천</span>' : ''}
+      </div>
+      <div class="ai-reason">${c.reason}</div>
+      ${c.score ? `<div class="ai-score">신뢰도: ${Math.round(c.score * 100)}%</div>` : ''}
+    </div>
+  `).join('')
+}
+
+// ── Storytelling ──────────────────────────────────────────
+
+async function generateStory() {
+  if (!chartConfig) return
+  const btn = document.getElementById('story-btn')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spin">⏳</span> 스토리 생성 중...'
+  document.getElementById('story-error').innerHTML = ''
+  document.getElementById('story-result').innerHTML = ''
+
+  try {
+    const res = await axios.post(`${API}/api/storytelling`, {
+      chart_type:   chartConfig.type,
+      x_column:     chartConfig.xAxis,
+      y_column:     chartConfig.yAxis,
+      title:        chartConfig.title,
+      data_summary: dataSummary,
+      sample_data:  preview.slice(0, 5),
+      language:     'ko',
+    })
+    renderStory(res.data)
+  } catch (e) {
+    document.getElementById('story-error').innerHTML =
+      `<div class="error-box" style="margin-top:8px;">스토리 생성 실패. 다시 시도해주세요.</div>`
+  } finally {
+    btn.disabled = false
+    btn.textContent = 'AI 스토리 생성'
+  }
+}
+
+const INSIGHT_COLORS = {
+  positive: { bg: '#E1F5EE', text: '#085041', border: '#9FE1CB' },
+  negative: { bg: '#FCEBEB', text: '#A32D2D', border: '#F7C1C1' },
+  neutral:  { bg: '#EEEDFE', text: '#3C3489', border: '#AFA9EC' },
+}
+
+function renderStory(data) {
+  const result = document.getElementById('story-result')
+  const insights = (data.insights || []).map(ins => {
+    const c = INSIGHT_COLORS[ins.type] || INSIGHT_COLORS.neutral
+    return `
+      <div class="insight-card" style="background:${c.bg}; border:1px solid ${c.border};">
+        <div class="insight-val" style="color:${c.text};">${ins.value}</div>
+        <div class="insight-lbl" style="color:${c.text};">${ins.label}</div>
+      </div>`
+  }).join('')
+
+  result.innerHTML = `
+    <div class="insight-row">${insights}</div>
+    <div class="story-box">
+      <h4>데이터 스토리</h4>
+      <p>${data.story || ''}</p>
+    </div>
+    ${data.recommendation ? `
+    <div class="reco-box">
+      <strong>권고:</strong>
+      <span>${data.recommendation}</span>
+    </div>` : ''}
+  `
+}
+</script>
+</body>
+</html>

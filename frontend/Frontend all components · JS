@@ -103,7 +103,7 @@ export default function App() {
     </div>
   )
 }
-*/
+
 
 
  { box-sizing: border-box; margin: 0; padding: 0; }
@@ -162,7 +162,7 @@ body { font-family: 'Malgun Gothic', 'Segoe UI', sans-serif; }
   padding: 12px;
   overflow-y: auto;
 }
-*/
+
 
 
 import { useRef } from 'react'
@@ -209,7 +209,7 @@ export default function FileUpload({ onUpload }) {
     </div>
   )
 }
-*/
+
 
 
 const TYPE_STYLE = {
@@ -274,7 +274,7 @@ export default function DataPreview({ columns, preview }) {
     </div>
   )
 }
-*/
+
 
 
  
@@ -394,7 +394,7 @@ export default function ManualChart({ columns, onConfigChange }) {
     </div>
   )
 }
-*/
+
 
 
 
@@ -452,8 +452,6 @@ export default function AiPanel({ charts, loading, onRequest }) {
     </div>
   )
 }
-*/
-
 
 
 import { useState } from 'react'
